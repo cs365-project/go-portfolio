@@ -1,0 +1,91 @@
+name: CI/CD Pipeline for Go App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/go-port
+  IMAGE_TAG: ${{ github.run_id }}
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Build
+        run: go build -o go-app
+      - name: Test
+        run: go test ./...
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+
+  docker-build-push-scan:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          
+      - name: Docker Scout CVE Scan
+        uses: docker/scout-action@v1
+        with:
+          command: cves
+          image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          ignore-unchanged: true
+          only-severities: critical,high
+
+  update-helm-repo:
+    runs-on: ubuntu-latest
+    needs: docker-build-push-scan
+    if: github.ref == 'refs/heads/main' # ทำงานเฉพาะตอน push เข้า main
+    steps:
+      - name: Checkout Helm Repo
+        uses: actions/checkout@v4
+        with:
+          repository: KittiphonKamnuan/go-app-devops # ⚠️ 
+          token: ${{ secrets.REPO_PAT }}
+          
+      - name: Update values.yaml with new Image Tag
+        run: |
+          # ใช้คำสั่ง sed ในการหาบรรทัด tag: ในไฟล์ values.yaml แล้วแทนที่ด้วย run_id
+          sed -i "s/tag: .*/tag: \"${{ env.IMAGE_TAG }}\"/" charts/values.yaml
+          
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add charts/values.yaml
+          git commit -m "Update image tag to ${{ env.IMAGE_TAG }} via CI"
+          git push origin main
