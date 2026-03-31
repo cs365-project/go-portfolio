@@ -6,7 +6,7 @@ COPY . .
 RUN go build -o go-app .
 
 # Stage 2: Create a lightweight image
-FROM alpine:latest
+FROM alpine:3.19
 WORKDIR /app
 # Copy binary and static files from builder
 COPY --from=builder /app/go-app .

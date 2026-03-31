@@ -34,7 +34,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: latest
 
@@ -74,7 +74,7 @@ jobs:
       - name: Checkout Helm Repo
         uses: actions/checkout@v4
         with:
-          repository: KittiphonKamnuan/go-app-devops # ⚠️ 
+          repository: cs365-project/go-app-devops
           token: ${{ secrets.REPO_PAT }}
           
       - name: Update values.yaml with new Image Tag
@@ -88,4 +88,4 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add charts/values.yaml
           git commit -m "Update image tag to ${{ env.IMAGE_TAG }} via CI"
-          git push origin main
+          git push origin develop
