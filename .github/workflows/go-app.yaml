@@ -65,6 +65,8 @@ jobs:
           image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           ignore-unchanged: true
           only-severities: critical,high
+          dockerhub-user: ${{ secrets.DOCKER_USERNAME }}
+          dockerhub-password: ${{ secrets.DOCKER_PASSWORD }}
 
   update-helm-repo:
     runs-on: ubuntu-latest
