@@ -3,34 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Team Portfolio - CS365</title>
+    <title>CS365 GitOps Portfolio</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body { 
-            /* เปลี่ยนมาใช้ System Font Stack ตัดปัญหาเรื่อง Internet */
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #333;
+            color: #e2e8f0;
+            padding: 20px;
         }
         
         .container { 
-            background: rgba(255, 255, 255, 0.95); 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
-            max-width: 700px; 
-            width: 90%;
+            border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            max-width: 850px; 
+            width: 100%;
             text-align: center; 
-            animation: fadeIn 1s ease-in-out;
+            animation: fadeIn 1s ease-out;
         }
 
         @keyframes fadeIn { 
@@ -38,126 +36,178 @@
             to { opacity: 1; transform: translateY(0); } 
         }
 
-        h1 { 
-            color: #2d3748; 
-            margin-bottom: 10px; 
-            font-weight: 600; 
-            letter-spacing: -0.5px;
-        }
-        
-        .subtitle { 
-            color: #4a5568; 
-            margin-bottom: 30px; 
-            font-size: 1.1em; 
-        }
+        h1 { font-size: 2.2em; color: #ffffff; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .subtitle { color: #94a3b8; margin-bottom: 35px; font-size: 1.1em; }
+        .section-title { text-align: left; font-size: 1.2em; color: #cbd5e1; margin-bottom: 15px; border-left: 4px solid #38bdf8; padding-left: 10px; }
 
-        .team-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 30px;
-        }
+        .team-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 35px; }
 
+        /* การ์ดทีมเวิร์คเพิ่ม cursor ให้รู้ว่ากดได้ */
         .member-card {
-            background: #f7fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px 20px;
             flex: 1;
-            min-width: 250px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            min-width: 260px;
+            transition: all 0.3s ease;
+            cursor: pointer; /* ทำให้เป็นรูปมือตอนชี้ */
+            position: relative;
         }
 
         .member-card:hover { 
             transform: translateY(-5px); 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15); 
         }
 
-        .member-icon { 
-            font-size: 3rem; 
-            margin-bottom: 10px; 
+        /* เพิ่มไอคอนแว่นขยายเล็กๆ มุมขวาบนของการ์ด */
+        .member-card::after {
+            content: "👆 Click to view tasks";
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.75em;
+            color: #64748b;
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
-        .member-name { 
-            font-size: 1.2em; 
-            font-weight: 600; 
-            color: #2b6cb0; 
-            margin-bottom: 5px; 
+        .member-card:hover::after { opacity: 1; }
+
+        .member-icon { font-size: 3.5rem; margin-bottom: 15px; display: inline-block; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 50%; }
+        .member-name { font-size: 1.3em; font-weight: 600; color: #f8fafc; margin-bottom: 5px; }
+        .member-role { font-size: 0.95em; color: #94a3b8; margin-bottom: 15px; }
+        .role-badge { display: inline-block; background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; }
+
+        /* --- CSS สำหรับ Popup Modal --- */
+        .modal-overlay {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            z-index: 1000; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.3s ease;
         }
 
-        .member-role { 
-            font-size: 0.9em; 
-            color: #718096; 
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: #1e293b; border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px; border-radius: 20px; width: 90%; max-width: 500px;
+            color: #f8fafc; text-align: left; position: relative;
+            transform: translateY(-20px); transition: transform 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        .role-badge {
-            display: inline-block;
-            background: #ebf4ff;
-            color: #3182ce;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            margin-top: 12px;
-            font-weight: 600;
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 20px; font-size: 1.5rem;
+            cursor: pointer; color: #94a3b8; transition: 0.2s;
         }
 
-        hr { 
-            border: none; 
-            border-top: 1px solid #e2e8f0; 
-            margin: 20px 0; 
-        }
-
-        .footer-text { 
-            font-size: 0.85em; 
-            color: #a0aec0; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 8px; 
-        }
-
-        .status-dot { 
-            height: 10px; 
-            width: 10px; 
-            background-color: #48bb78; 
-            border-radius: 50%; 
-            display: inline-block; 
-            animation: pulse 2s infinite; 
-        }
-
-        @keyframes pulse { 
-            0% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); } 
-            70% { box-shadow: 0 0 0 10px rgba(72, 187, 120, 0); } 
-            100% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); } 
-        }
+        .close-btn:hover { color: #ef4444; }
+        .task-list { margin-top: 15px; padding-left: 20px; color: #cbd5e1; line-height: 1.6; font-size: 0.95em; }
+        .task-list li { margin-bottom: 10px; }
+        
+        hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 25px 0; }
+        .status-box { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 10px 20px; border-radius: 30px; font-size: 0.9em; color: #10b981; display: inline-flex; align-items: center; gap: 10px; font-weight: 500; }
+        .status-dot { height: 12px; width: 12px; background-color: #10b981; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🚀 Team Portfolio</h1>
-        <p class="subtitle">CS365 - Go Web Application via GitOps</p>
+        <h1>🚀 CS365 GitOps Portfolio</h1>
+        <p class="subtitle">Automated Continuous Integration & Continuous Deployment</p>
 
+        <h2 class="section-title">Core Team Members</h2>
         <div class="team-container">
-            <div class="member-card">
-                <div class="member-icon">👨🏻‍💻</div>
-                <div class="member-name">หนุ่ม</div>
-                <div class="member-role">Infrastructure & CI/CD Specialist</div>
-                <span class="role-badge">AWS / Terraform</span>
+            <div class="member-card" onclick="openModal('num')">
+                <div class="member-icon">☁️</div>
+                <div class="member-name">หนุ่ม (กิตติภณ)</div>
+                <div class="member-role">Infrastructure & CI/CD</div>
+                <span class="role-badge">AWS EKS / Terraform</span>
             </div>
             
-            <div class="member-card">
-                <div class="member-icon">👨🏻‍💻</div>
-                <div class="member-name">มิว</div>
-                <div class="member-role">App Developer & Docker Specialist</div>
-                <span class="role-badge">Go / Docker</span>
+            <div class="member-card" onclick="openModal('mew')">
+                <div class="member-icon">💻</div>
+                <div class="member-name">มิว (กิตติธัช)</div>
+                <div class="member-role">App Dev & Docker</div>
+                <span class="role-badge">Go / Actions / ArgoCD</span>
             </div>
         </div>
 
         <hr>
-        <div class="footer-text">
-            <span class="status-dot"></span> Automated CI/CD Pipeline running successfully.
+        
+        <div class="status-box">
+            <span class="status-dot"></span> 
+            All Systems Operational & Synced
         </div>
     </div>
+
+    <div class="modal-overlay" id="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal(event)">&times;</span>
+            <h2 id="modal-title">Name</h2>
+            <p id="modal-role" style="color: #38bdf8; margin-bottom: 10px; font-size: 0.9em;"></p>
+            <hr style="margin: 15px 0;">
+            <h3 style="font-size: 1.1em; margin-bottom: 15px; color: #f8fafc;">🛠️ ความรับผิดชอบหลัก (Key Tasks):</h3>
+            <ul class="task-list" id="modal-tasks">
+                </ul>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูลหน้าที่ของแต่ละคน
+        const teamData = {
+            'num': {
+                title: 'นายกิตติภณ คำนวล (หนุ่ม)',
+                role: 'Infrastructure & CI/CD Specialist',
+                tasks: [
+                    'ออกแบบและสร้างโครงสร้างพื้นฐานบน AWS (IaC) ด้วยโค้ด Terraform',
+                    'จัดการ EKS Cluster และระบบเครือข่าย (EC2 Jump Server, Nginx Ingress)',
+                    'วางสถาปัตยกรรม GitOps ด้วย ArgoCD สำหรับ Automated Deployment',
+                    'ทดสอบและจัดการ End-to-End Pipeline ของระบบภาพรวมทั้งหมด'
+                ]
+            },
+            'mew': {
+                title: 'นายกิตติธัช เด่นสกุลประเสริฐ (มิว)',
+                role: 'App Developer & Docker Specialist',
+                tasks: [
+                    'พัฒนาแอปพลิเคชัน Go Web App และออกแบบ UI/UX ของระบบ',
+                    'จัดการ Dockerfile ให้ได้ Best Practice (ใช้ Alpine เพื่อลดขนาด Image)',
+                    'สร้างระบบ CI Pipeline ด้วย GitHub Actions แบบ 100% Custom Built',
+                    'ดูแลระบบตรวจสอบคุณภาพโค้ด และสแกนช่องโหว่ (Docker Scout CVE Scan)'
+                ]
+            }
+        };
+
+        // ฟังก์ชันเปิด Modal
+        function openModal(personId) {
+            const person = teamData[personId];
+            document.getElementById('modal-title').innerText = person.title;
+            document.getElementById('modal-role').innerText = person.role;
+            
+            const taskList = document.getElementById('modal-tasks');
+            taskList.innerHTML = ''; // เคลียร์ของเก่า
+            
+            // วนลูปใส่ list งานทีละข้อ
+            person.tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerText = task;
+                taskList.appendChild(li);
+            });
+
+            // แสดงหน้าต่าง
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // ฟังก์ชันปิด Modal
+        function closeModal(event) {
+            document.getElementById('modal').classList.remove('active');
+        }
+    </script>
 </body>
 </html>
