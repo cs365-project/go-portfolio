@@ -81,7 +81,7 @@ jobs:
           
       - name: Update values.yaml with new Image Tag
         run: |
-          # ใช้คำสั่ง sed ในการหาบรรทัด tag: ในไฟล์ values.yaml แล้วแทนที่ด้วย run_id
+          sed -i "s|repository: .*|repository: ${{ secrets.DOCKER_USERNAME }}/go-port|" charts/values.yaml
           sed -i "s/tag: .*/tag: \"${{ env.IMAGE_TAG }}\"/" charts/values.yaml
           
       - name: Commit and Push Changes
