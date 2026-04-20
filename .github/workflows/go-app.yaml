@@ -82,6 +82,7 @@ jobs:
         with:
           repository: cs365-project/go-app-devops
           token: ${{ secrets.REPO_PAT }}
+          ref: develop
           
       - name: Update values.yaml with new Image Tag
         run: |
