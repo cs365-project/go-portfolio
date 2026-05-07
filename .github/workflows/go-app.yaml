@@ -83,7 +83,7 @@ jobs:
           repository: cs365-project/go-app-devops
           token: ${{ secrets.REPO_PAT }}
           ref: develop
-          
+
       - name: Update values.yaml with new Image Tag
         run: |
           sed -i "s|repository: .*|repository: ${{ secrets.DOCKER_USERNAME }}/go-port|" charts/values.yaml
