@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// ชี้ไปที่โฟลเดอร์ static เพื่อเสิร์ฟไฟล์ HTML
-	fs := http.FileServer(http.Dir("./static"))
+	fs := http.FileServer(http.Dir("./"))
 	http.Handle("/", fs)
 
 	fmt.Println("Server is running on port 8080...")
